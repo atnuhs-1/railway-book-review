@@ -1,35 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  const validateForm = (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailError('');
+    setPasswordError('');
+
+    let isValid = true;
+
+    if (!email.includes('@')) {
+      setEmailError('有効なメールアドレスを入力してください。');
+      isValid = false;
+    }
+
+    if (password.length < 8) {
+      setPasswordError('パスワードは8文字以上である必要があります。');
+      isValid = false;
+    }
+
+    if (isValid) {
+      console.log('フォームが送信されました');
+      // ここで実際のログイン処理を行う
+    }
+  };
 
   return (
-    <>
+    <form onSubmit={validateForm} noValidate>
+      <h2>ログイン</h2>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <label htmlFor="email">メールアドレス</label>
+        <input
+          type="email"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        {emailError && <span className="error">{emailError}</span>}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <div>
+        <label htmlFor="password">パスワード</label>
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        {passwordError && <span className="error">{passwordError}</span>}
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <button type="submit">ログイン</button>
+    </form>
+  );
 }
 
-export default App
+export default App;
