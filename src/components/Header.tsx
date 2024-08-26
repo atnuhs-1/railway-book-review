@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function Header() {
   return (
-    <div className="flex justify-between shadow-sm p-4">
+    <div className="flex justify-between border p-4">
       <h2 className="text-3xl  font-bold">
         <Link to={`/`}>Book Review</Link>
       </h2>
