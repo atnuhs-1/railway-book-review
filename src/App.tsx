@@ -1,60 +1,30 @@
-import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/routing/ProtectedRoute";
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
+import RegisterIconPage from "./pages/RegisterIconPage";
+import Home from "./pages/Home";
+import Header from "./components/Header";
+import ProfilePage from "./pages/ProfilePage";
 
-function App() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-
-  const validateForm = (e: React.FormEvent) => {
-    e.preventDefault();
-    setEmailError('');
-    setPasswordError('');
-
-    let isValid = true;
-
-    if (!email.includes('@')) {
-      setEmailError('有効なメールアドレスを入力してください。');
-      isValid = false;
-    }
-
-    if (password.length < 8) {
-      setPasswordError('パスワードは8文字以上である必要があります。');
-      isValid = false;
-    }
-
-    if (isValid) {
-      console.log('フォームが送信されました');
-      // ここで実際のログイン処理を行う
-    }
-  };
-
+const App = () => {
   return (
-    <form onSubmit={validateForm} noValidate>
-      <h2>ログイン</h2>
-      <div>
-        <label htmlFor="email">メールアドレス</label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        {emailError && <span className="error">{emailError}</span>}
-      </div>
-      <div>
-        <label htmlFor="password">パスワード</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {passwordError && <span className="error">{passwordError}</span>}
-      </div>
-      <button type="submit">ログイン</button>
-    </form>
+    <AuthProvider>
+      <Router>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/register-icon" element={<RegisterIconPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
-}
+};
 
 export default App;
