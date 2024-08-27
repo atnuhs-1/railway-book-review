@@ -1,58 +1,68 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
-import api from "../utils/api";
-
-interface BookReview {
-  id: string;
-  title: string;
-  url: string;
-  detail: string;
-  review: string;
-  reviewer: string;
-}
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../app/store";
+import {
+  fetchBookReviews,
+  setCurrentOffset,
+} from "../features/bookReviews/bookReviewsSlice";
+import BookReviewCard from "../components/BookReviewCard";
+import Pagination from "../components/Pagination";
+import LoadingSpinner from "../components/LoadingSpinner";
+import ErrorMessage from "../components/ErrorMessage";
 
 const BookReviewListPage: React.FC = () => {
-  const [bookReviews, setBookReviews] = useState<BookReview[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { token } = useAuth();
+  const dispatch = useDispatch<AppDispatch>();
+  const { reviews, status, error, currentOffset, hasMore } = useSelector(
+    (state: RootState) => state.bookReviews,
+  );
 
   useEffect(() => {
-    const fetchBookReviews = async () => {
-      setIsLoading(true);
-      try {
-        const response = await api.get("/public/books?offset=0");
-        setBookReviews(response.data);
-      } catch (err) {
-        setError("書籍レビューの取得に失敗しました。");
-        console.error("Error fetching book reviews:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (status === "idle") {
+      dispatch(fetchBookReviews(currentOffset));
+    }
+  }, [status, dispatch, currentOffset]);
 
-    fetchBookReviews();
-  }, [token]);
+  const handleNext = () => {
+    const newOffset = currentOffset + 10;
+    dispatch(setCurrentOffset(newOffset));
+    dispatch(fetchBookReviews(newOffset));
+  };
 
-  if (isLoading) return <div>読み込み中...</div>;
-  if (error) return <div>{error}</div>;
+  const handlePrevious = () => {
+    if (currentOffset >= 10) {
+      const newOffset = currentOffset - 10;
+      dispatch(setCurrentOffset(newOffset));
+      dispatch(fetchBookReviews(newOffset));
+    }
+  };
+
+  if (status === "loading") return <LoadingSpinner />;
+  if (status === "failed")
+    return <ErrorMessage message={error || "エラーが発生しました"} />;
 
   return (
-    <div className="px-10 pt-5 bg-white">
-      <h1 className="text-xl text-center">書籍レビュー一覧</h1>
-      <div className="grid grid-cols-4 gap-4 mt-4">
-        {bookReviews.map((review) => (
-          <div key={review.id} className=" rounded-lg shadow-md p-4 bg-slate-50">
-            <h2 className="truncate font-semibold border-b mb-2">{review.title}</h2>
-            <p>レビュアー: {review.reviewer}</p>
-            <p className="truncate">詳細: {review.detail}</p>
-            <p className="truncate">レビュー: {review.review}</p>
-            <a href={review.url} target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:text-red-400">
-              書籍リンク
-            </a>
-          </div>
+    <div className="px-10 py-5 bg-white">
+      <div className="flex justify-between py-4">
+        <h1 className="text-xl">書籍レビュー一覧</h1>
+        <Pagination
+          onPrevious={handlePrevious}
+          onNext={handleNext}
+          hasPrevious={currentOffset > 0}
+          hasNext={hasMore}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 pb-4">
+        {reviews.map((review) => (
+          <BookReviewCard key={review.id} review={review} />
         ))}
       </div>
+      <Pagination
+        onPrevious={handlePrevious}
+        onNext={handleNext}
+        hasPrevious={currentOffset > 0}
+        hasNext={hasMore}
+      />
     </div>
   );
 };
