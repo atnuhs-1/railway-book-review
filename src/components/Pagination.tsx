@@ -14,7 +14,7 @@ const Pagination: React.FC<Props> = ({
   hasNext,
 }) => {
   const buttonBaseStyle =
-    "px-2 py-1 bg-blue-500 rounded-lg text-white shadow-lg hover:bg-sky-700";
+    "px-2 py-1  rounded-lg text-white shadow-lg transition-colors duration-200";
   const activeStyle = "bg-blue-500 text-white hover:bg-blue-600";
   const disabledStyle = "bg-gray-300 text-gray-500 cursor-not-allowed";
 

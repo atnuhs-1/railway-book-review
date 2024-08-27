@@ -1,13 +1,21 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 
-export interface AuthContextType {
+type UserInfo = {
+  name: string;
+  iconUrl: "string"
+}
+
+export type AuthContextType = {
   token: string | null;
   setToken: (token: string | null) => void;
   isAuthenticated: boolean;
+  userInfo: UserInfo | null;
   signUp: (name: string, email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => void;
   registerIcon: (icon: File) => Promise<void>;
+  fetchUserInfo: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -21,12 +29,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.getItem("token"),
   );
 
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(() => {
+    const storedUserInfo = sessionStorage.getItem("userInfo");
+    return storedUserInfo ? JSON.parse(storedUserInfo) : null;
+  });
+
+  const fetchUserInfo = async () => {
+    if (!token) {
+      setUserInfo(null);
+      sessionStorage.removeItem("userInfo");
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        "https://railway.bookreview.techtrain.dev/users",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const newUserInfo: UserInfo = {
+        name: response.data.name,
+        iconUrl: response.data.iconUrl,
+      };
+      setUserInfo(newUserInfo);
+      sessionStorage.setItem("userInfo", JSON.stringify(newUserInfo));
+    } catch (error) {
+      console.error("Failed to fetch user info:", error);
+      setUserInfo(null);
+      sessionStorage.removeItem("userInfo");
+    }
+  };
+
   // tokenが変更されるのはsetToken以外のいつ？
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
+      fetchUserInfo();
     } else {
       localStorage.removeItem("token");
+      sessionStorage.removeItem("userInfo");
+      setUserInfo(null);
     }
   }, [token]);
 
@@ -64,6 +109,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       throw error;
     }
   };
+  
+  const signOut = () => {
+    setToken(null);
+    setUserInfo(null);
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("userInfo");
+  }
 
   const registerIcon = async (icon: File) => {
     if (!token) {
@@ -96,9 +148,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         token,
         setToken,
         isAuthenticated: !!token,
+        userInfo,
         signUp,
         signIn,
+        signOut,
         registerIcon,
+        fetchUserInfo,
       }}
     >
       {children}
