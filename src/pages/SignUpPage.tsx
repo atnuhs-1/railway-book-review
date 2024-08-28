@@ -62,7 +62,7 @@ export default function SignUpPage() {
             htmlFor="name"
             className="block text-sm font-medium text-gray-700"
           >
-            名前:
+            ユーザー名：
           </label>
           <input
             id="name"

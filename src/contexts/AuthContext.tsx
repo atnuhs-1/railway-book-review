@@ -1,10 +1,10 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 type UserInfo = {
   name: string;
-  iconUrl: "string"
-}
+  iconUrl: "string" | undefined;
+};
 
 export type AuthContextType = {
   token: string | null;
@@ -16,17 +16,18 @@ export type AuthContextType = {
   signOut: () => void;
   registerIcon: (icon: File) => Promise<void>;
   fetchUserInfo: () => Promise<void>;
-}
+  updateUserProfile: (name: string) => Promise<void>; 
+};
 
 export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [token, setToken] = useState<string | null>(
-    localStorage.getItem("token"),
+    localStorage.getItem("token")
   );
 
   const [userInfo, setUserInfo] = useState<UserInfo | null>(() => {
@@ -34,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return storedUserInfo ? JSON.parse(storedUserInfo) : null;
   });
 
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = useCallback(async () => {
     if (!token) {
       setUserInfo(null);
       sessionStorage.removeItem("userInfo");
@@ -61,9 +62,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setUserInfo(null);
       sessionStorage.removeItem("userInfo");
     }
-  };
+  }, [token]);
 
-  // tokenが変更されるのはsetToken以外のいつ？
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
@@ -73,7 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       sessionStorage.removeItem("userInfo");
       setUserInfo(null);
     }
-  }, [token]);
+  }, [token, fetchUserInfo]);
 
   const signUp = async (name: string, email: string, password: string) => {
     try {
@@ -83,7 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           name,
           email,
           password,
-        },
+        }
       );
       const newToken = response.data.token;
       setToken(newToken);
@@ -100,7 +100,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         {
           email,
           password,
-        },
+        }
       );
       const newToken = response.data.token;
       setToken(newToken);
@@ -109,13 +109,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       throw error;
     }
   };
-  
+
   const signOut = () => {
     setToken(null);
     setUserInfo(null);
     localStorage.removeItem("token");
     sessionStorage.removeItem("userInfo");
-  }
+  };
 
   const registerIcon = async (icon: File) => {
     if (!token) {
@@ -134,10 +134,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
     } catch (error) {
       console.error("Icon registration failed:", error);
+      throw error;
+    }
+  };
+
+  const updateUserProfile = async (name: string) => {
+    if (!token) {
+      throw new Error("認証されていません。");
+    }
+    try {
+      const response = await axios.put(
+        "https://railway.bookreview.techtrain.dev/users",
+        {
+          name,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const newUserInfo: UserInfo = {
+        name: response.data.name,
+        iconUrl: userInfo?.iconUrl,
+      };
+      setUserInfo(newUserInfo);
+      sessionStorage.setItem("userInfo", JSON.stringify(newUserInfo));
+    } catch (error) {
+      console.error("Update Failed: ", error);
       throw error;
     }
   };
@@ -154,6 +182,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         signOut,
         registerIcon,
         fetchUserInfo,
+        updateUserProfile,
       }}
     >
       {children}

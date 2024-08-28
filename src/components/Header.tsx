@@ -1,5 +1,15 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { LogOut, User } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Header() {
   const auth = useAuth();
@@ -16,12 +26,32 @@ export default function Header() {
       <div className="flex justify-end space-x-4">
         {auth.isAuthenticated ? (
           <>
-            
-            <img width={30} height={30} src={auth.userInfo?.iconUrl} className="rounded-full"/>
             <div className="p-2">{auth.userInfo?.name}</div>
-            <div>
-              <button onClick={handleLogOut} className="p-2 rounded-lg bg-slate-200 hover:bg-slate-300">Log out</button>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Avatar>
+                  <AvatarImage src={auth.userInfo?.iconUrl} />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <User  className="mr-2 h-4 w-4"/>
+                  <Link to={`/profile`}>Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <LogOut className="mr-2 h-4 w-4"/>
+                  <span>
+                    <button onClick={handleLogOut} className="">
+                      Log out
+                    </button>
+                  </span>
+                  <div></div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </>
         ) : (
           <>
