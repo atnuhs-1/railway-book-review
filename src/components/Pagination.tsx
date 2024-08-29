@@ -15,7 +15,7 @@ const Pagination: React.FC<Props> = ({
 }) => {
   const buttonBaseStyle =
     "px-2 py-1  rounded-lg text-white shadow-lg transition-colors duration-200";
-  const activeStyle = "bg-blue-500 text-white hover:bg-blue-600";
+  const activeStyle = "bg-blue-500 hover:bg-blue-600";
   const disabledStyle = "bg-gray-300 text-gray-500 cursor-not-allowed";
 
   return (

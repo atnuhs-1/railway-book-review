@@ -6,7 +6,7 @@ const initialState: BookReviewsState = {
   reviews: [],
   status: "idle",
   error: null,
-  currentOffset: 10,
+  currentOffset: 0,
   hasMore: true,
 };
 

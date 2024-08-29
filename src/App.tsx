@@ -10,6 +10,7 @@ import RegisterIconPage from "./pages/RegisterIconPage";
 import BookReviewListPage from "./pages/Home";
 import Header from "./components/Header";
 import ProfilePage from "./pages/ProfilePage";
+import NewReviewPage from "./pages/NewReviewPage";
 
 const App: React.FC = () => {
   return (
@@ -24,6 +25,7 @@ const App: React.FC = () => {
             <Route element={<ProtectedRoute />}>
               <Route path="/register-icon" element={<RegisterIconPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/new" element={<NewReviewPage />}/>
             </Route>
           </Routes>
         </Router>

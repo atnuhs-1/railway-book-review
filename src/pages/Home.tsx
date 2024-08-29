@@ -9,6 +9,7 @@ import BookReviewCard from "../components/BookReviewCard";
 import Pagination from "../components/Pagination";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
+import { Link } from "react-router-dom";
 
 const BookReviewListPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -44,6 +45,7 @@ const BookReviewListPage: React.FC = () => {
     <div className="px-10 py-5 bg-white">
       <div className="flex justify-between py-4">
         <h1 className="text-xl">書籍レビュー一覧</h1>
+        <Link to={`/new`} className="px-4 py-2  rounded-lg text-white bg-lime-500 hover:bg-lime-800 shadow-lg transition-colors duration-200">レビュー投稿</Link>
         <Pagination
           onPrevious={handlePrevious}
           onNext={handleNext}
