@@ -38,11 +38,11 @@ export default function Header() {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <User  className="mr-2 h-4 w-4"/>
+                  <User className="mr-2 h-4 w-4" />
                   <Link to={`/profile`}>Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <LogOut className="mr-2 h-4 w-4"/>
+                  <LogOut className="mr-2 h-4 w-4" />
                   <span>
                     <button onClick={handleLogOut} className="">
                       Log out

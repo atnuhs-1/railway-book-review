@@ -11,6 +11,7 @@ import BookReviewListPage from "./pages/Home";
 import Header from "./components/Header";
 import ProfilePage from "./pages/ProfilePage";
 import NewReviewPage from "./pages/NewReviewPage";
+import ReviewDetailPage from "./pages/ReviewDetailPage";
 
 const App: React.FC = () => {
   return (
@@ -22,10 +23,13 @@ const App: React.FC = () => {
             <Route path="/" element={<BookReviewListPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
-            <Route element={<ProtectedRoute />}>
+            <Route element={<ProtectedRoute redirectHome />}>
               <Route path="/register-icon" element={<RegisterIconPage />} />
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/new" element={<NewReviewPage />}/>
+            </Route>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/new" element={<NewReviewPage />} />
+              <Route path="/detail/:id" element={<ReviewDetailPage />} />
             </Route>
           </Routes>
         </Router>

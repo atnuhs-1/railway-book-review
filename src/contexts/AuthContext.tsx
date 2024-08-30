@@ -16,18 +16,18 @@ export type AuthContextType = {
   signOut: () => void;
   registerIcon: (icon: File) => Promise<void>;
   fetchUserInfo: () => Promise<void>;
-  updateUserProfile: (name: string) => Promise<void>; 
+  updateUserProfile: (name: string) => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [token, setToken] = useState<string | null>(
-    localStorage.getItem("token")
+    localStorage.getItem("token"),
   );
 
   const [userInfo, setUserInfo] = useState<UserInfo | null>(() => {
@@ -49,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const newUserInfo: UserInfo = {
         name: response.data.name,
@@ -83,7 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           name,
           email,
           password,
-        }
+        },
       );
       const newToken = response.data.token;
       setToken(newToken);
@@ -100,7 +100,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         {
           email,
           password,
-        }
+        },
       );
       const newToken = response.data.token;
       setToken(newToken);
@@ -134,7 +134,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
     } catch (error) {
       console.error("Icon registration failed:", error);
@@ -156,7 +156,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const newUserInfo: UserInfo = {
         name: response.data.name,

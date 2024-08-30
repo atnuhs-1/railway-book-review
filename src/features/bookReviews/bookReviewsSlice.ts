@@ -13,6 +13,7 @@ const initialState: BookReviewsState = {
 export const fetchBookReviews = createAsyncThunk(
   "bookReviews/fetchBookReviews",
   async (offset: number) => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
     const response = await api.get(`/public/books?offset=${offset}`);
     return response.data;
   },

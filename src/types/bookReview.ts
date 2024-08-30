@@ -14,3 +14,9 @@ export type BookReviewsState = {
   currentOffset: number;
   hasMore: boolean;
 };
+
+export type BookReviewDetail = {
+  review: BookReview | null;
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
+};

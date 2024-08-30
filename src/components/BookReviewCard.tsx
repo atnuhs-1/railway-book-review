@@ -1,25 +1,37 @@
 import React from "react";
 import { BookReview } from "../types/bookReview";
+import { Link } from "react-router-dom";
 
 interface Props {
   review: BookReview;
 }
 
 const BookReviewCard: React.FC<Props> = ({ review }) => (
-  <div className="border rounded-lg shadow-md p-4 space-y-1 bg-slate-50">
-    <h2 className="truncate font-semibold border-b mb-2">{review.title}</h2>
-    <p>投稿者: {review.reviewer}</p>
-    <p className="truncate">詳細: {review.detail}</p>
-    <p className="truncate">レビュー: {review.review}</p>
-    <a
-      href={review.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-sky-600 hover:text-red-400"
-    >
-      書籍リンク
-    </a>
-  </div>
+  <Link
+    to={`/detail/${review.id}`}
+    className="rounded-lg shadow-md p-4 space-y-1 hover:shadow-lg transition-shadow duration-300"
+  >
+    <div className="p-2 flex flex-col space-y-3">
+      <h2 className="truncate text-lg font-bold border-slate-400">
+        {review.title}
+      </h2>
+      <p className="text-gray-600">{review.reviewer}</p>
+      <Link to={`/detail/${review.id}`}>
+        <p className="line-clamp-3  text-gray-600">{review.review}</p>
+      </Link>
+      <div className="inline-block">
+        <Link
+          to={review.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sky-600 hover:text-red-400"
+          onClick={(e) => e.stopPropagation()}
+        >
+          書籍リンク
+        </Link>
+      </div>
+    </div>
+  </Link>
 );
 
 export default BookReviewCard;

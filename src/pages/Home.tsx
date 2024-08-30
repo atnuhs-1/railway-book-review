@@ -10,6 +10,7 @@ import Pagination from "../components/Pagination";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const BookReviewListPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -37,34 +38,35 @@ const BookReviewListPage: React.FC = () => {
     }
   };
 
-  if (status === "loading") return <LoadingSpinner />;
+  if (status === "loading")
+    return <LoadingSpinner style="px-10 py-9 text-2xl font-bold" />;
   if (status === "failed")
     return <ErrorMessage message={error || "エラーが発生しました"} />;
 
   return (
-    <div className="px-10 py-5 bg-white">
-      <div className="flex justify-between py-4">
-        <h1 className="text-xl">書籍レビュー一覧</h1>
-        <Link to={`/new`} className="px-4 py-2  rounded-lg text-white bg-lime-500 hover:bg-lime-800 shadow-lg transition-colors duration-200">レビュー投稿</Link>
-        <Pagination
-          onPrevious={handlePrevious}
-          onNext={handleNext}
-          hasPrevious={currentOffset > 0}
-          hasNext={hasMore}
-        />
+    <div className="px-10 py-10 bg-white">
+      <div className="flex justify-between pb-4">
+        <h1 className="text-2xl font-bold">書籍レビュー一覧</h1>
+        <div className="flex space-x-24">
+          <Pagination
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+            hasPrevious={currentOffset > 0}
+            hasNext={hasMore}
+          />
+          <Button asChild>
+            <Link to={`/new`} className="">
+              レビュー投稿
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 pb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-4">
         {reviews.map((review) => (
           <BookReviewCard key={review.id} review={review} />
         ))}
       </div>
-      <Pagination
-        onPrevious={handlePrevious}
-        onNext={handleNext}
-        hasPrevious={currentOffset > 0}
-        hasNext={hasMore}
-      />
     </div>
   );
 };
