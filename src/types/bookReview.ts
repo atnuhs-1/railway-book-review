@@ -5,6 +5,7 @@ export type BookReview = {
   detail: string;
   review: string;
   reviewer: string;
+  isMine?: boolean
 };
 
 export type BookReviewsState = {

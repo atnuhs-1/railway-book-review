@@ -12,20 +12,37 @@ const initialState: BookReviewsState = {
 
 export const fetchBookReviews = createAsyncThunk(
   "bookReviews/fetchBookReviews",
-  async (offset: number) => {
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    const response = await api.get(`/public/books?offset=${offset}`);
-    return response.data;
-  },
+  async (
+    { offset, token }: { offset: number; token?: string | null },
+    { rejectWithValue }
+  ) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      const endpoint = token ? "/books" : "/public/books";
+      const response = await api.get(`${endpoint}?offset=${offset}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      return { data: response.data, offset };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
 );
 
 const bookReviewsSlice = createSlice({
   name: "bookReviews",
   initialState,
   reducers: {
-    setCurrentOffset: (state, action) => {
-      state.currentOffset = action.payload;
+    // editしたときに再フェッチせずに変更されたreviewだけを更新するアクション（いまはHomeがマウントされるたびにデータをフェッチするようにしているから意味ない）
+    updateReviewInList: (state, action: PayloadAction<BookReview>) => {
+      const index = state.reviews.findIndex(review => review.id === action.payload.id);
+      if ( index !== -1) {
+        state.reviews[index] = action.payload;
+      }
     },
+    setStatus: (state, action) => {
+      state.status = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -34,11 +51,12 @@ const bookReviewsSlice = createSlice({
       })
       .addCase(
         fetchBookReviews.fulfilled,
-        (state, action: PayloadAction<BookReview[]>) => {
+        (state, action: PayloadAction<{ data: BookReview[]; offset: number }>) => {
           state.status = "succeeded";
-          state.reviews = action.payload;
-          state.hasMore = action.payload.length === 10;
-        },
+          state.reviews = action.payload.data;
+          state.currentOffset = action.payload.offset;
+          state.hasMore = action.payload.data.length === 10;
+        }
       )
       .addCase(fetchBookReviews.rejected, (state, action) => {
         state.status = "failed";
@@ -47,5 +65,5 @@ const bookReviewsSlice = createSlice({
   },
 });
 
-export const { setCurrentOffset } = bookReviewsSlice.actions;
+export const {updateReviewInList, setStatus} = bookReviewsSlice.actions;
 export default bookReviewsSlice.reducer;

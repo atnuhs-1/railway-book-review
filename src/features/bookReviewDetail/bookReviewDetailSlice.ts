@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../utils/api";
-import { BookReviewDetail } from "../../types/bookReview";
+import { BookReview, BookReviewDetail } from "../../types/bookReview";
 
 const initialState: BookReviewDetail = {
   review: null,
@@ -25,17 +25,34 @@ export const fetchReviewDetail = createAsyncThunk(
         },
       });
 
+      await api.post(
+        `/logs`,
+        { selectBookId: response.data.id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       return response.data;
     } catch (error) {
       return rejectWithValue(error);
     }
-  },
+  }
 );
 
 const bookReviewDetailSlice = createSlice({
   name: "bookReviewDetail",
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    // EditReviewPageのid変更でreviewを管理しているから必要ない
+    // updateReviewDetail: (state, action: PayloadAction<BookReview>) => {
+    //   if (state.review && state.review.id === action.payload.id) {
+    //     state.review = action.payload;
+    //   }
+    // },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchReviewDetail.pending, (state) => {
@@ -52,4 +69,5 @@ const bookReviewDetailSlice = createSlice({
   },
 });
 
+// export const {updateReviewDetail} = bookReviewDetailSlice.actions;
 export default bookReviewDetailSlice.reducer;

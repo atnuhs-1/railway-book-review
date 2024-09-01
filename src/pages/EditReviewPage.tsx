@@ -1,44 +1,79 @@
-import { AppDispatch } from "@/app/store";
+import { updateReviewInBothSlices } from "@/actions/reviewActions";
+import { AppDispatch, RootState } from "@/app/store";
+import ErrorMessage from "@/components/ErrorMessage";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { fetchReviewDetail } from "@/features/bookReviewDetail/bookReviewDetailSlice";
 import { setStatus } from "@/features/bookReviews/bookReviewsSlice";
 import { useAuth } from "@/hooks/useAuth";
 import axios from "axios";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 
-type PostReviewInputs = {
+type EditReviewInputs = {
   title: string;
   url: string;
   detail: string;
   review: string;
 };
 
-export default function NewReviewPage() {
+export default function EditReviewPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { token } = useAuth();
+  const { id } = useParams<{ id: string }>();
+  const dispatch = useDispatch<AppDispatch>();
+  const { review, status, error } = useSelector(
+    (state: RootState) => state.bookReviewDetail
+  );
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<PostReviewInputs>();
-  const dispatch = useDispatch<AppDispatch>();
+    formState: { errors, isDirty },
+    reset,
+  } = useForm<EditReviewInputs>({
+    defaultValues: {
+      title: review?.title,
+      url: review?.url,
+      detail: review?.detail,
+      review: review?.review,
+    },
+  });
 
-  const onSubmit: SubmitHandler<PostReviewInputs> = async (data) => {
-    setIsLoading(true);
+  useEffect(() => {
+    if (id && token) {
+      dispatch(fetchReviewDetail({ id, token }));
+    }
+  }, [dispatch, id, token]);
+
+  useEffect(() => {
+    if (review) {
+      reset({
+        title: review.title,
+        url: review.url,
+        detail: review.detail,
+        review: review.review,
+      });
+    }
+  }, [review, reset]);
+
+  if (isDirty && submitError) {
     setSubmitError(null);
+  }
+
+  const deleteReview = async () => {
+    setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        "https://railway.bookreview.techtrain.dev/books",
-        data,
+      await axios.delete(
+        `https://railway.bookreview.techtrain.dev/books/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       navigate("/");
@@ -51,11 +86,60 @@ export default function NewReviewPage() {
         // 非Axiosエラー
         setSubmitError("予期せぬエラーが発生しました。");
       }
-      console.error("Post Failed: ", error);
+      console.error("Delete Failed: ", error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  const onSubmit: SubmitHandler<EditReviewInputs> = useCallback(
+    async (data) => {
+      setIsLoading(true);
+      setSubmitError(null);
+
+      if (!isDirty) {
+        setSubmitError(
+          "変更が検出されませんでした。レビューを更新するには、少なくとも1つの項目を変更してください。"
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await axios.put(
+          `https://railway.bookreview.techtrain.dev/books/${id}`,
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        // dispatch(updateReviewInBothSlices(response.data));
+        navigate("/");
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.response) {
+            setSubmitError(error.response.data.message);
+          }
+        } else {
+          // 非Axiosエラー
+          setSubmitError("予期せぬエラーが発生しました。");
+        }
+        console.error("Post Failed: ", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [id, token, navigate, isDirty]
+  );
+
+  if (status === "loading")
+    return <LoadingSpinner style="mx-auto mt-6 max-w-xl" />;
+  if (status === "failed")
+    return <ErrorMessage message={error || "エラーが発生しました"} />;
+  if (!review) return null;
+
   return (
     <div className="max-w-xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">レビュー投稿</h2>
@@ -151,9 +235,16 @@ export default function NewReviewPage() {
           disabled={isLoading}
           className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? "送信中..." : "レビューを投稿"}
+          {isLoading ? "送信中..." : "レビューを更新"}
         </button>
+        
       </form>
+      <button
+        onClick={deleteReview}
+        className="w-full mt-2 px-4 py-2 bg-red-500 text-white rounded-md"
+        >
+            削除
+        </button>
     </div>
   );
 }

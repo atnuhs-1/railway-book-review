@@ -29,7 +29,7 @@ export default function ReviewDetailPage() {
   if (!review) return null;
 
   return (
-    <div className="mx-auto my-6 max-w-2xl flex flex-col space-y-8 text-lg">
+    <div className="mx-auto my-10 max-w-2xl flex flex-col space-y-8 text-lg">
       <div className="border-b pb-4">
         <h2 className="font-bold text-3xl mb-4">{review.title}</h2>
         <div className="flex justify-end">

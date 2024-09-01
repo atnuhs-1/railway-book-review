@@ -12,29 +12,44 @@ import Header from "./components/Header";
 import ProfilePage from "./pages/ProfilePage";
 import NewReviewPage from "./pages/NewReviewPage";
 import ReviewDetailPage from "./pages/ReviewDetailPage";
+import { AuthRoutes } from "./components/routing/AuthRoute";
+import EditReviewPage from "./pages/EditReviewPage";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const App: React.FC = () => {
   return (
-    <Provider store={store}>
-      <AuthProvider>
-        <Router>
+    <HelmetProvider>
+    <Router>
+      <Provider store={store}>
+        <AuthProvider>
+          <Helmet>
+            <title>Book Review</title>
+          </Helmet>
+
           <Header />
           <Routes>
             <Route path="/" element={<BookReviewListPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignUpPage />} />
+
+            <Route element={<AuthRoutes />}>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignUpPage />} />
+            </Route>
+
             <Route element={<ProtectedRoute redirectHome />}>
               <Route path="/register-icon" element={<RegisterIconPage />} />
               <Route path="/profile" element={<ProfilePage />} />
             </Route>
+
             <Route element={<ProtectedRoute />}>
               <Route path="/new" element={<NewReviewPage />} />
               <Route path="/detail/:id" element={<ReviewDetailPage />} />
+              <Route path="/edit/:id" element={<EditReviewPage />} />
             </Route>
           </Routes>
-        </Router>
-      </AuthProvider>
-    </Provider>
+        </AuthProvider>
+      </Provider>
+    </Router>
+    </HelmetProvider>
   );
 };
 
