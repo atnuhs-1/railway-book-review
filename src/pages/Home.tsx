@@ -13,20 +13,20 @@ import { useAuth } from "@/hooks/useAuth";
 const BookReviewListPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { reviews, status, error, currentOffset, hasMore } = useSelector(
-    (state: RootState) => state.bookReviews
+    (state: RootState) => state.bookReviews,
   );
   const { isAuthenticated, token } = useAuth();
 
   useEffect(() => {
     dispatch(
-      fetchBookReviews({ offset: currentOffset, token: token || undefined })
+      fetchBookReviews({ offset: currentOffset, token: token || undefined }),
     );
   }, [isAuthenticated, currentOffset, token]);
 
   const handleNext = () => {
     const newOffset = currentOffset + 10;
     dispatch(
-      fetchBookReviews({ offset: newOffset, token: token || undefined })
+      fetchBookReviews({ offset: newOffset, token: token || undefined }),
     );
   };
 
@@ -34,7 +34,7 @@ const BookReviewListPage: React.FC = () => {
     if (currentOffset >= 10) {
       const newOffset = currentOffset - 10;
       dispatch(
-        fetchBookReviews({ offset: newOffset, token: token || undefined })
+        fetchBookReviews({ offset: newOffset, token: token || undefined }),
       );
     }
   };

@@ -26,7 +26,7 @@ export default function EditReviewPage() {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const { review, status, error } = useSelector(
-    (state: RootState) => state.bookReviewDetail
+    (state: RootState) => state.bookReviewDetail,
   );
   const {
     register,
@@ -73,7 +73,7 @@ export default function EditReviewPage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       navigate("/");
@@ -99,7 +99,7 @@ export default function EditReviewPage() {
 
       if (!isDirty) {
         setSubmitError(
-          "変更が検出されませんでした。レビューを更新するには、少なくとも1つの項目を変更してください。"
+          "変更が検出されませんでした。レビューを更新するには、少なくとも1つの項目を変更してください。",
         );
         setIsLoading(false);
         return;
@@ -113,7 +113,7 @@ export default function EditReviewPage() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         // dispatch(updateReviewInBothSlices(response.data));
         navigate("/");
@@ -131,7 +131,7 @@ export default function EditReviewPage() {
         setIsLoading(false);
       }
     },
-    [id, token, navigate, isDirty]
+    [id, token, navigate, isDirty],
   );
 
   if (status === "loading")
@@ -237,14 +237,13 @@ export default function EditReviewPage() {
         >
           {isLoading ? "送信中..." : "レビューを更新"}
         </button>
-        
       </form>
       <button
         onClick={deleteReview}
         className="w-full mt-2 px-4 py-2 bg-red-500 text-white rounded-md"
-        >
-            削除
-        </button>
+      >
+        削除
+      </button>
     </div>
   );
 }

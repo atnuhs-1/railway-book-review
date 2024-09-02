@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test:e2e": "playwright test",
-    "test": "vitest",
+    "test:e2e": "playwright test tests/login.spec.ts",
+    "test": "vitest src/LoginPage.test.tsx",
     "format:fix": "prettier . --write"
   },
   "dependencies": {

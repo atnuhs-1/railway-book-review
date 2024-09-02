@@ -54,10 +54,10 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 ">
+    <div className="max-w-md mx-auto mt-8">
       <h2 className="text-2xl font-bold mb-4 text-center">ログイン</h2>
       <div className="p-6 bg-white rounded-lg shadow-md">
-        <div className="flex justify-end mb-4 ">
+        <div className="flex justify-end mb-4">
           <Link to={`/signup`} className="text-sky-500 border-b border-sky-500">
             サインアップはこちら
           </Link>
@@ -78,6 +78,7 @@ const LoginPage = () => {
               id="email"
               type="email"
               className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              aria-describedby="email-error"
               {...register("email", {
                 required: "メールアドレスは必須です",
                 pattern: {
@@ -87,7 +88,12 @@ const LoginPage = () => {
               })}
             />
             {errors.email && (
-              <span className="text-red-500 text-xs mt-1">
+              <span
+                id="email-error"
+                className="text-red-500 text-xs mt-1"
+                role="alert"
+                aria-live="polite"
+              >
                 {errors.email.message}
               </span>
             )}
@@ -103,17 +109,31 @@ const LoginPage = () => {
               id="password"
               type="password"
               className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              aria-describedby="password-error"
               {...register("password", {
                 required: "パスワードは必須です",
               })}
             />
             {errors.password && (
-              <span className="text-red-500 text-xs mt-1">
+              <span
+                id="password-error"
+                className="text-red-500 text-xs mt-1"
+                role="alert"
+                aria-live="polite"
+              >
                 {errors.password.message}
               </span>
             )}
           </div>
-          {apiError && <div className="text-red-500 text-sm">{apiError}</div>}
+          {apiError && (
+            <div
+              className="text-red-500 text-sm"
+              role="alert"
+              aria-live="assertive"
+            >
+              {apiError}
+            </div>
+          )}
           <button
             type="submit"
             disabled={isLoading}

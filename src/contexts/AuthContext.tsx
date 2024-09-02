@@ -1,9 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/app/store";
-import { setStatus } from "@/features/bookReviews/bookReviewsSlice";
 
 type UserInfo = {
   name: string;
@@ -38,8 +35,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const storedUserInfo = sessionStorage.getItem("userInfo");
     return storedUserInfo ? JSON.parse(storedUserInfo) : null;
   });
-
-  const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
 
@@ -123,7 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setUserInfo(null);
     localStorage.removeItem("token");
     sessionStorage.removeItem("userInfo");
-    navigate("/login")
+    navigate("/login");
   };
 
   const registerIcon = async (icon: File) => {

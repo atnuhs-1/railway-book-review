@@ -1,10 +1,7 @@
-import { AppDispatch } from "@/app/store";
-import { setStatus } from "@/features/bookReviews/bookReviewsSlice";
 import { useAuth } from "@/hooks/useAuth";
 import axios from "axios";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 type PostReviewInputs = {
@@ -24,22 +21,17 @@ export default function NewReviewPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<PostReviewInputs>();
-  const dispatch = useDispatch<AppDispatch>();
 
   const onSubmit: SubmitHandler<PostReviewInputs> = async (data) => {
     setIsLoading(true);
     setSubmitError(null);
 
     try {
-      const response = await axios.post(
-        "https://railway.bookreview.techtrain.dev/books",
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      await axios.post("https://railway.bookreview.techtrain.dev/books", data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       navigate("/");
     } catch (error) {

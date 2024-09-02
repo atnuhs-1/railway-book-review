@@ -19,36 +19,36 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 const App: React.FC = () => {
   return (
     <HelmetProvider>
-    <Router>
-      <Provider store={store}>
-        <AuthProvider>
-          <Helmet>
-            <title>Book Review</title>
-          </Helmet>
+      <Router>
+        <Provider store={store}>
+          <AuthProvider>
+            <Helmet>
+              <title>Book Review</title>
+            </Helmet>
 
-          <Header />
-          <Routes>
-            <Route path="/" element={<BookReviewListPage />} />
+            <Header />
+            <Routes>
+              <Route path="/" element={<BookReviewListPage />} />
 
-            <Route element={<AuthRoutes />}>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignUpPage />} />
-            </Route>
+              <Route element={<AuthRoutes />}>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
+              </Route>
 
-            <Route element={<ProtectedRoute redirectHome />}>
-              <Route path="/register-icon" element={<RegisterIconPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-            </Route>
+              <Route element={<ProtectedRoute redirectHome />}>
+                <Route path="/register-icon" element={<RegisterIconPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+              </Route>
 
-            <Route element={<ProtectedRoute />}>
-              <Route path="/new" element={<NewReviewPage />} />
-              <Route path="/detail/:id" element={<ReviewDetailPage />} />
-              <Route path="/edit/:id" element={<EditReviewPage />} />
-            </Route>
-          </Routes>
-        </AuthProvider>
-      </Provider>
-    </Router>
+              <Route element={<ProtectedRoute />}>
+                <Route path="/new" element={<NewReviewPage />} />
+                <Route path="/detail/:id" element={<ReviewDetailPage />} />
+                <Route path="/edit/:id" element={<EditReviewPage />} />
+              </Route>
+            </Routes>
+          </AuthProvider>
+        </Provider>
+      </Router>
     </HelmetProvider>
   );
 };

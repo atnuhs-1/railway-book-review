@@ -32,14 +32,14 @@ export const fetchReviewDetail = createAsyncThunk(
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       return response.data;
     } catch (error) {
       return rejectWithValue(error);
     }
-  }
+  },
 );
 
 const bookReviewDetailSlice = createSlice({

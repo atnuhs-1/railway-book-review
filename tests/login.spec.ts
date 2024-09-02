@@ -1,50 +1,56 @@
 import { test, expect } from "@playwright/test";
 
-test.beforeEach(async ({ page }) => {
-  // テスト前にアプリケーションのURLに移動
-  await page.goto("http://localhost:5173");
-});
+test.describe("LoginPage", () => {
+  test.beforeEach(async ({ page }) => {
+    // ログインページにアクセス
+    await page.goto("http://localhost:5173/login");
+  });
 
-test("displays error for invalid email", async ({ page }) => {
-  await page.fill("#email", "invalid-email");
-  await page.fill("#password", "validpassword123");
-  await page.click('button[type="submit"]');
+  test("メールアドレスとパスワードが正しく入力された場合、エラーメッセージを表示しない", async ({
+    page,
+  }) => {
+    await page.getByLabel("メールアドレス:").fill("test@example.com");
+    await page.getByLabel("パスワード:").fill("password123");
+    await page.getByRole("button", { name: "ログイン" }).click();
 
-  // emailエラーメッセージが表示されることを確認
-  await expect(
-    page.locator("text=有効なメールアドレスを入力してください。"),
-  ).toBeVisible();
-  // passwordエラーメッセージが表示されないことを確認
-  await expect(
-    page.locator("text=パスワードは8文字以上である必要があります。"),
-  ).not.toBeVisible();
-});
+    // エラーメッセージが表示されていないことを確認
+    await expect(page.getByText("メールアドレスは必須です")).toBeHidden();
+    await expect(page.getByText("パスワードは必須です")).toBeHidden();
+  });
 
-test("displays error for short password", async ({ page }) => {
-  await page.fill("#email", "valid@email.com");
-  await page.fill("#password", "short");
-  await page.click('button[type="submit"]');
+  test("メールアドレスが無効な場合、エラーメッセージを表示する", async ({
+    page,
+  }) => {
+    await page.getByLabel("メールアドレス:").fill("invalid-email");
+    await page.getByLabel("パスワード:").fill("password123");
+    await page.getByRole("button", { name: "ログイン" }).click();
 
-  // passwordエラーメッセージが表示されることを確認
-  await expect(
-    page.locator("text=パスワードは8文字以上である必要があります。"),
-  ).toBeVisible();
-  // emailエラーメッセージが表示されないことを確認
-  await expect(
-    page.locator("text=有効なメールアドレスを入力してください。"),
-  ).not.toBeVisible();
-});
+    await expect(
+      page.getByText("有効なメールアドレスを入力してください"),
+    ).toBeVisible();
+  });
 
-test("no errors displayed for valid input", async ({ page }) => {
-  await page.fill("#email", "valid@email.com");
-  await page.fill("#password", "validpassword123");
-  await page.click('button[type="submit"]');
+  test("メールアドレスが空の場合、エラーメッセージを表示する", async ({
+    page,
+  }) => {
+    await page.getByLabel("パスワード:").fill("password123");
+    await page.getByRole("button", { name: "ログイン" }).click();
 
-  // どちらのエラーメッセージも表示されないことを確認
-  await expect(
-    page.locator("text=有効なメールアドレスを入力してください。"),
-  ).not.toBeVisible();
-  await expect(
-    page.locator("text=パスワードは8文字以上である必要があります。"),
-  ).not.toBeVisible();
+    await expect(page.getByText("メールアドレスは必須です")).toBeVisible();
+  });
+
+  test("パスワードが空の場合、エラーメッセージを表示する", async ({ page }) => {
+    await page.getByLabel("メールアドレス:").fill("test@example.com");
+    await page.getByRole("button", { name: "ログイン" }).click();
+
+    await expect(page.getByText("パスワードは必須です")).toBeVisible();
+  });
+
+  test("送信中はログインボタンが無効になることを確認する", async ({ page }) => {
+    await page.getByLabel("メールアドレス:").fill("test@example.com");
+    await page.getByLabel("パスワード:").fill("password123");
+
+    await page.getByRole("button", { name: "ログイン" }).click();
+    await expect(page.getByRole("button", { name: "送信中..." })).toBeVisible();
+  });
 });
