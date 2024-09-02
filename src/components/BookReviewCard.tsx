@@ -28,7 +28,7 @@ const BookReviewCard: React.FC<Props> = ({ review, showEditButton }) => {
             to={review.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sky-600 hover:text-red-400"
+            className="text-sky-800 hover:text-red-400"
             onClick={(e) => e.stopPropagation()}
           >
             書籍リンク

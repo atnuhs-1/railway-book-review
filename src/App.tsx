@@ -23,7 +23,11 @@ const App: React.FC = () => {
         <Provider store={store}>
           <AuthProvider>
             <Helmet>
-              <title>Book Review</title>
+              <title>書籍レビュー | BookReview</title>
+              <meta
+                name="description"
+                content="BookReviewは、読書愛好家のための信頼できる書籍レビューサイトです。最新のベストセラーから古典まで、幅広いジャンルの本をカバーしています。"
+              ></meta>
             </Helmet>
 
             <Header />

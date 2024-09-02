@@ -1,9 +1,9 @@
-import { updateReviewInBothSlices } from "@/actions/reviewActions";
+import { } from "@/actions/reviewActions";
 import { AppDispatch, RootState } from "@/app/store";
 import ErrorMessage from "@/components/ErrorMessage";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { fetchReviewDetail } from "@/features/bookReviewDetail/bookReviewDetailSlice";
-import { setStatus } from "@/features/bookReviews/bookReviewsSlice";
+import { } from "@/features/bookReviews/bookReviewsSlice";
 import { useAuth } from "@/hooks/useAuth";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
@@ -106,7 +106,7 @@ export default function EditReviewPage() {
       }
 
       try {
-        const response = await axios.put(
+        await axios.put(
           `https://railway.bookreview.techtrain.dev/books/${id}`,
           data,
           {

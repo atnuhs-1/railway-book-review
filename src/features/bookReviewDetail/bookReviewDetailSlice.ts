@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import api from "../../utils/api";
-import { BookReview, BookReviewDetail } from "../../types/bookReview";
+import { BookReviewDetail } from "../../types/bookReview";
 
 const initialState: BookReviewDetail = {
   review: null,
