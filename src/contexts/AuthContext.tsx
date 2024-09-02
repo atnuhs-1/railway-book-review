@@ -140,6 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           },
         },
       );
+      await fetchUserInfo();
     } catch (error) {
       console.error("Icon registration failed:", error);
       throw error;

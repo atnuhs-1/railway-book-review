@@ -34,16 +34,19 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<BookReviewListPage />} />
 
+              {/* Homeにリダイレクト */}
               <Route element={<AuthRoutes />}>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
               </Route>
 
+              {/* Homeにリダイレクト */}
               <Route element={<ProtectedRoute redirectHome />}>
                 <Route path="/register-icon" element={<RegisterIconPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
               </Route>
 
+              {/* ログイン画面にリダイレクト */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/new" element={<NewReviewPage />} />
                 <Route path="/detail/:id" element={<ReviewDetailPage />} />

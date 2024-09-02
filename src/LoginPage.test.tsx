@@ -1,5 +1,5 @@
 import React from "react";
-import { describe, it, expect} from "vitest";
+import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -25,7 +25,6 @@ describe("LoginPage", () => {
       </AllTheProviders>,
     );
 
-    // 主要な要素が存在することを確認
     expect(
       screen.getByRole("heading", { name: "ログイン" }),
     ).toBeInTheDocument();

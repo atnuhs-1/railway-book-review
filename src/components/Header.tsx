@@ -30,8 +30,8 @@ export default function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar>
-                  <AvatarImage src={auth.userInfo?.iconUrl} />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarImage src={auth.userInfo?.iconUrl} alt="icon" />
+                  <AvatarFallback>Icon</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="">

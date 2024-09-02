@@ -15,13 +15,13 @@ const BookReviewListPage: React.FC = () => {
   const { reviews, status, error, currentOffset, hasMore } = useSelector(
     (state: RootState) => state.bookReviews,
   );
-  const { isAuthenticated, token } = useAuth();
+  const { isAuthenticated, token, userInfo } = useAuth();
 
   useEffect(() => {
     dispatch(
       fetchBookReviews({ offset: currentOffset, token: token || undefined }),
     );
-  }, [isAuthenticated, currentOffset, token]);
+  }, [isAuthenticated, currentOffset, token, userInfo]);
 
   const handleNext = () => {
     const newOffset = currentOffset + 10;
